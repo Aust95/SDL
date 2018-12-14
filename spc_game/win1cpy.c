@@ -27,13 +27,14 @@ static int events(SDL_Rect *spc_mx)
 			switch (event.key.keysym.sym) {
 				case SDLK_ESCAPE:
 					done = 1;
-				case SDLK_d:
-					spc_mx->x += 10;
 				break;
-				case SDLK_a:
-					spc_mx->x -= 10;
 			}
 		}
+		const Uint8 *kb_ptrst = SDL_GetKeyboardState(NULL);
+		if (kb_ptrst[SDL_SCANCODE_A])
+			spc_mx->x -= 5;//Move space ship right
+		if (kb_ptrst[SDL_SCANCODE_D])
+			spc_mx->x += 5;//Move space ship left
 	}
 	return done;
 }
@@ -97,8 +98,6 @@ static bool platform_init()
 		return false;
 	}
 }
-
-
 
 static void platform_end()
 {
