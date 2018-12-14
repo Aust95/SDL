@@ -28,7 +28,10 @@ static int events(SDL_Rect *spc_mx)
 				case SDLK_ESCAPE:
 					done = 1;
 				case SDLK_d:
-					
+					spc_mx->x += 10;
+				break;
+				case SDLK_a:
+					spc_mx->x -= 10;
 			}
 		}
 	}
@@ -135,7 +138,7 @@ int main()
 
 	while (done == 0) {
 
-		done = events(&spc_s.x);
+		done = events(&spc_s);
 
 		SDL_RenderClear(rend);//Limpa a tela
 		SDL_RenderCopy(rend, tex, NULL, NULL);//Copia a textura para o contexto de renderizacao
