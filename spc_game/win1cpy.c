@@ -97,6 +97,8 @@ static bool platform_init()
 
 		return false;
 	}
+
+	return true;
 }
 
 static void platform_end()
@@ -114,6 +116,14 @@ static void platform_end()
 
 	IMG_Quit();
 	SDL_Quit();
+}
+
+void lr_collision(SDL_Rect *spc_mx)
+{
+	if (spc_mx->x < 0)
+		spc_mx->x = 0;
+	else if (spc_mx->x + SPC_SW > WIN_WIDTH)
+		spc_mx->x = WIN_WIDTH - SPC_SW;
 }
 
 int main()
@@ -138,6 +148,7 @@ int main()
 	while (done == 0) {
 
 		done = events(&spc_s);
+		lr_collision(&spc_s);
 
 		SDL_RenderClear(rend);//Limpa a tela
 		SDL_RenderCopy(rend, tex, NULL, NULL);//Copia a textura para o contexto de renderizacao
