@@ -10,7 +10,7 @@ CFLAGS := -Wall -Wextra -ggdb -std=c99 -pedantic-errors -O3 -fsanitize=address -
 HDRS :=
 
 # add source files here
-SRCS := win1cpy.c
+SRCS := win1rf.c
 
 # generate names of object files
 OBJS := $(SRCS:.c=.o)

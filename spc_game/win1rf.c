@@ -8,35 +8,60 @@
 #define WIN_HEIGHT (500)
 #define SPC_SW 32
 #define SPC_SH 64
+#define BLT_SW 8
+#define BLT_SH 16
+
+#define BUTTON_LEFT  (0x01)
+#define BUTTON_RIGHT (0x02)
 
 //Pointers
 SDL_Window *win;
 SDL_Renderer *rend;
 SDL_Surface *img;
 SDL_Surface *spc;
+SDL_Surface *blt;
 SDL_Texture *tex;
+SDL_Texture *blt_tex;
 SDL_Texture *texspc;
 
-static int events(SDL_Rect *spc_mx)
+static uint8_t user_input = 0;
+
+static int events(void)
 {
 	SDL_Event event;
-	int done = 0;
 
-	while (SDL_PollEvent(&event)) {//Event loop
-		if (event.type == SDL_KEYDOWN) {
-			switch (event.key.keysym.sym) {
-				case SDLK_ESCAPE:
-					done = 1;
-				break;
+	while (SDL_PollEvent(&event)) {
+		if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
+			switch (event.key.keysym.scancode) {
+				default: break;
+				case SDL_SCANCODE_ESCAPE:
+					return 1;
+					break;
+				case SDL_SCANCODE_A:
+					if (event.type == SDL_KEYDOWN)
+						user_input |= BUTTON_LEFT;
+					else
+						user_input &= ~BUTTON_LEFT;
+					break;
+				case SDL_SCANCODE_D:
+					if (event.type == SDL_KEYDOWN)
+						user_input |= BUTTON_RIGHT;
+					else
+						user_input &= ~BUTTON_RIGHT;
+					break;
 			}
 		}
-		const Uint8 *kb_ptrst = SDL_GetKeyboardState(NULL);
-		if (kb_ptrst[SDL_SCANCODE_A])
-			spc_mx->x -= 5;//Move space ship right
-		if (kb_ptrst[SDL_SCANCODE_D])
-			spc_mx->x += 5;//Move space ship left
 	}
-	return done;
+
+	return 0;
+}
+
+static void update_ship(SDL_Rect* const rect)
+{
+	if (user_input&BUTTON_LEFT)
+		rect->x -= 5;
+	else if (user_input&BUTTON_RIGHT)
+		rect->x += 5;
 }
 
 static bool platform_init()
@@ -72,28 +97,38 @@ static bool platform_init()
 
 	img = IMG_Load("city.png");
 	if (img == NULL) {
-		printf("Could not create surface");
+		printf("Could not create sfc");
 
 		return false;
 	}
 
+	blt = IMG_Load("shoot.png");
+	if (blt == NULL) {
+		printf("Could not create sfc2");
+	}
+
 	spc = IMG_Load("spcs.png");
 	if (spc == NULL) {
-		printf("Could not create surface 2");
+		printf("Could not create sfc3");
 
 		return false;
 	}
 
 	tex = SDL_CreateTextureFromSurface(rend, img);
 	if (tex == NULL) {
-		printf("Could not create texture");
+		printf("Could not create tex");
 
 		return false;
 	}
 
+	blt_tex = SDL_CreateTextureFromSurface(rend, blt);
+	if (blt_tex == NULL) {
+		printf("Could not create tex2");
+	}
+
 	texspc = SDL_CreateTextureFromSurface(rend, spc);
 	if (texspc == NULL) {
-		printf("Could not create texture 2");
+		printf("Could not create tex3");
 
 		return false;
 	}
@@ -131,9 +166,11 @@ int main()
 	atexit(platform_end);
 	platform_init();
 
-	int done = 0;
 	SDL_Rect rec_size;
 	SDL_Rect spc_s;
+
+	SDL_Rect blt_rec_s;
+	SDL_Rect blt_s;
 
 	rec_size.x = 0;
 	rec_size.y = 0;
@@ -145,13 +182,23 @@ int main()
 	spc_s.w = SPC_SW;
 	spc_s.h = SPC_SH;
 
-	while (done == 0) {
+	blt_rec_s.x = 0;
+	blt_rec_s.y = 0;
+	blt_rec_s.w = BLT_SW;
+	blt_rec_s.h = BLT_SH;
 
-		done = events(&spc_s);
+	blt_s.x = WIN_WIDTH/2 - BLT_SW/2;
+	blt_s.y = spc_s.y - BLT_SH;
+	blt_s.w = BLT_SW;
+	blt_s.h = BLT_SH;
+
+	while (events() == 0) {
+		update_ship(&spc_s);
 		lr_collision(&spc_s);
 
 		SDL_RenderClear(rend);//Limpa a tela
 		SDL_RenderCopy(rend, tex, NULL, NULL);//Copia a textura para o contexto de renderizacao
+		SDL_RenderCopy(rend, blt_tex, &blt_rec_s, &blt_s);
 		SDL_RenderCopy(rend, texspc, &rec_size, &spc_s);
 		SDL_RenderPresent(rend);
 	}
