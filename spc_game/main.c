@@ -3,13 +3,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
+#include "spcs_stuff.h"
 
 #define WIN_WIDTH (700)
 #define WIN_HEIGHT (500)
-#define SPC_SW 32
-#define SPC_SH 64
-#define BLT_SW 8
-#define BLT_SH 16
 
 #define BUTTON_LEFT  (0x01)
 #define BUTTON_RIGHT (0x02)
@@ -24,7 +21,7 @@ SDL_Texture *tex;
 SDL_Texture *blt_tex;
 SDL_Texture *texspc;
 
-static uint8_t user_input = 0;
+uint8_t user_input = 0;
 
 static int events(void)
 {
@@ -54,14 +51,6 @@ static int events(void)
 	}
 
 	return 0;
-}
-
-static void update_ship(SDL_Rect* const rect)
-{
-	if (user_input&BUTTON_LEFT)
-		rect->x -= 5;
-	else if (user_input&BUTTON_RIGHT)
-		rect->x += 5;
 }
 
 static bool platform_init()
@@ -95,19 +84,19 @@ static bool platform_init()
 		return false;
 	}
 
-	img = IMG_Load("city.png");
+	img = IMG_Load("images/city.png");
 	if (img == NULL) {
 		printf("Could not create sfc");
 
 		return false;
 	}
 
-	blt = IMG_Load("shoot.png");
+	blt = IMG_Load("images/shoot.png");
 	if (blt == NULL) {
 		printf("Could not create sfc2");
 	}
 
-	spc = IMG_Load("spcs.png");
+	spc = IMG_Load("images/spcs.png");
 	if (spc == NULL) {
 		printf("Could not create sfc3");
 
@@ -153,14 +142,6 @@ static void platform_end()
 	SDL_Quit();
 }
 
-void lr_collision(SDL_Rect *spc_mx)
-{
-	if (spc_mx->x < 0)
-		spc_mx->x = 0;
-	else if (spc_mx->x + SPC_SW > WIN_WIDTH)
-		spc_mx->x = WIN_WIDTH - SPC_SW;
-}
-
 int main()
 {
 	atexit(platform_end);
@@ -172,29 +153,12 @@ int main()
 	SDL_Rect blt_rec_s;
 	SDL_Rect blt_s;
 
-	rec_size.x = 0;
-	rec_size.y = 0;
-	rec_size.w = SPC_SW;
-	rec_size.h = SPC_SH;
-
-	spc_s.x = WIN_WIDTH/2 - SPC_SW/2;
-	spc_s.y = WIN_HEIGHT - SPC_SH;
-	spc_s.w = SPC_SW;
-	spc_s.h = SPC_SH;
-
-	blt_rec_s.x = 0;
-	blt_rec_s.y = 0;
-	blt_rec_s.w = BLT_SW;
-	blt_rec_s.h = BLT_SH;
-
-	blt_s.x = WIN_WIDTH/2 - BLT_SW/2;
-	blt_s.y = spc_s.y - BLT_SH;
-	blt_s.w = BLT_SW;
-	blt_s.h = BLT_SH;
+	spcs_param(&rec_size, &spc_s);
+	proj1_param(&blt_rec_s, &blt_s, &spc_s);
 
 	while (events() == 0) {
 		update_ship(&spc_s);
-		lr_collision(&spc_s);
+		lr_spcs_coll(&spc_s);
 
 		SDL_RenderClear(rend);//Limpa a tela
 		SDL_RenderCopy(rend, tex, NULL, NULL);//Copia a textura para o contexto de renderizacao
