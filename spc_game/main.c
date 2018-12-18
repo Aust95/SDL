@@ -133,8 +133,10 @@ static bool platform_init()
 
 static void platform_end()
 {
+	if (blt != NULL)
+		SDL_FreeSurface(blt);
 	if (spc != NULL)
-	SDL_FreeSurface(spc);
+		SDL_FreeSurface(spc);
 	if (img != NULL)
 		SDL_FreeSurface(img);
 	if (tex != NULL)
@@ -163,12 +165,14 @@ int main()
 	proj1_param(&blt_rec_s, &blt_s, &spc_s);
 
 	while (events() == 0) {
-		update_ship(&spc_s);
+		update_ship(&spc_s, &blt_s);
 		lr_spcs_coll(&spc_s);
+		proj1_track(&blt_s);
 
 		SDL_RenderClear(rend);//Limpa a tela
 		SDL_RenderCopy(rend, tex, NULL, NULL);//Copia a textura para o contexto de renderizacao
-		SDL_RenderCopy(rend, blt_tex, &blt_rec_s, &blt_s);
+		create_proj1(rend, blt_tex, &blt_rec_s, &blt_s);
+		destroy_proj1(&blt_s);
 		SDL_RenderCopy(rend, texspc, &rec_size, &spc_s);
 		SDL_RenderPresent(rend);
 	}
