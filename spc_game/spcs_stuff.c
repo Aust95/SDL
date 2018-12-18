@@ -4,9 +4,6 @@
 #define WIN_WIDTH (700)
 #define WIN_HEIGHT (500)
 
-#define BUTTON_LEFT  (0x01)
-#define BUTTON_RIGHT (0x02)
-
 extern uint8_t user_input;
 
 extern SDL_Rect rec_size;
@@ -35,7 +32,7 @@ void spcs_param(SDL_Rect *rec_size, SDL_Rect *spc_s)
 {
 	rec_size->x = 0;
 	rec_size->y = 0;
-	rec_size->w = SPC_SW;//s
+	rec_size->w = SPC_SW;
 	rec_size->h = SPC_SH;
 
 	spc_s->x = WIN_WIDTH/2 - SPC_SW/2;

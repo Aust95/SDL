@@ -8,9 +8,6 @@
 #define WIN_WIDTH (700)
 #define WIN_HEIGHT (500)
 
-#define BUTTON_LEFT  (0x01)
-#define BUTTON_RIGHT (0x02)
-
 //Pointers
 SDL_Window *win;
 SDL_Renderer *rend;
@@ -45,6 +42,15 @@ static int events(void)
 						user_input |= BUTTON_RIGHT;
 					else
 						user_input &= ~BUTTON_RIGHT;
+					break;
+			}
+		}
+
+		if (event.type == SDL_MOUSEBUTTONDOWN){
+			switch (event.type) {
+				case SDL_MOUSEBUTTONDOWN:
+					if (event.button.button == SDL_BUTTON_LEFT)
+					user_input |= LEFT_CLICK;
 					break;
 			}
 		}
