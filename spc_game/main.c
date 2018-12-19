@@ -2,8 +2,8 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
 #include "spcs_stuff.h"
+#include "render.h"
 
 #define WIN_WIDTH (700)
 #define WIN_HEIGHT (500)
@@ -169,12 +169,7 @@ int main()
 		lr_spcs_coll(&spc_s);
 		proj1_track(&blt_s);
 
-		SDL_RenderClear(rend);//Limpa a tela
-		SDL_RenderCopy(rend, tex, NULL, NULL);//Copia a textura para o contexto de renderizacao
-		create_proj1(rend, blt_tex, &blt_rec_s, &blt_s);
-		destroy_proj1(&blt_s);
-		SDL_RenderCopy(rend, texspc, &rec_size, &spc_s);
-		SDL_RenderPresent(rend);
+		render_stuff(rend, tex, texspc, &rec_size, &spc_s);
 	}
 
 	return 0;

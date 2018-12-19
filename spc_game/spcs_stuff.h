@@ -14,5 +14,3 @@ extern void spcs_param(SDL_Rect *const rec_size, SDL_Rect *const spc_s);
 extern void proj1_param(SDL_Rect *const blt_rec_s, SDL_Rect *const blt_s, SDL_Rect *const spc_s);
 extern void lr_spcs_coll(SDL_Rect *const spc_mx);
 extern void proj1_track(SDL_Rect *blt_s);
-extern void create_proj1(SDL_Renderer *rend, SDL_Texture *blt_tex, SDL_Rect *blt_rec_s, SDL_Rect *blt_s);
-extern void destroy_proj1(SDL_Rect *blt_s);

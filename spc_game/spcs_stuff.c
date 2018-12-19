@@ -70,18 +70,3 @@ void proj1_track(SDL_Rect *blt_s)
 		blt_s->y -= 10;
 	}
 }
-
-void create_proj1(SDL_Renderer *rend, SDL_Texture *blt_tex, SDL_Rect *blt_rec_s, SDL_Rect *blt_s)
-{
-	if (user_input&LEFT_CLICK) {
-		SDL_RenderCopy(rend, blt_tex, blt_rec_s, blt_s);
-	}
-}
-
-void destroy_proj1(SDL_Rect *blt_s)
-{
-	if (blt_s->y < 0) {
-		SDL_DestroyTexture(blt_tex);
-		blt_s->y = 200;
-	}
-}
