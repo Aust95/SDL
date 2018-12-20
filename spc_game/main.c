@@ -5,9 +5,6 @@
 #include "spcs_stuff.h"
 #include "render.h"
 
-#define WIN_WIDTH (700)
-#define WIN_HEIGHT (500)
-
 //Pointers
 SDL_Window *win;
 SDL_Renderer *rend;
@@ -80,7 +77,6 @@ static bool platform_init()
 		return false;
 	}
 
-	//Creates a renderer context	
 	Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 
 	rend = SDL_CreateRenderer(win, -1, render_flags);
@@ -132,7 +128,7 @@ static bool platform_init()
 }
 
 static void platform_end()
-{
+{	
 	if (blt != NULL)
 		SDL_FreeSurface(blt);
 	if (spc != NULL)
@@ -141,10 +137,18 @@ static void platform_end()
 		SDL_FreeSurface(img);
 	if (tex != NULL)
 		SDL_DestroyTexture(tex);
+	if (blt_tex != NULL)
+		SDL_DestroyTexture(blt_tex);
+	if (texspc != NULL)
+		SDL_DestroyTexture(texspc);
 	if (rend != NULL)
 		SDL_DestroyRenderer(rend);
 	if (win != NULL)
 		SDL_DestroyWindow(win);
+	int i;
+
+	for (i = 0; i < MAX_BLTS; i++)
+		d_projectile(i);
 
 	IMG_Quit();
 	SDL_Quit();
@@ -162,14 +166,13 @@ int main()
 	SDL_Rect blt_s;
 
 	spcs_param(&rec_size, &spc_s);
-	proj1_param(&blt_rec_s, &blt_s, &spc_s);
 
 	while (events() == 0) {
-		update_ship(&spc_s, &blt_s);
+		update_ship(&spc_s);
 		lr_spcs_coll(&spc_s);
-		proj1_track(&blt_s);
+		render_stuff(rend, tex, texspc, &rec_size, &spc_s,blt_tex, &blt_rec_s, &blt_s);
+		shoot(&spc_s, &blt_s);
 
-		render_stuff(rend, tex, texspc, &rec_size, &spc_s);
 	}
 
 	return 0;
